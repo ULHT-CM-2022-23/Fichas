@@ -8,19 +8,16 @@ import android.view.ViewGroup
 import com.github.mstavares.cm.acalculator.databinding.FragmentOperationDetailBinding
 
 private const val ARG_OPERATION_UUID = "ARG_OPERATION_UUID"
-private const val ARG_OPERATION_UI = "ARG_OPERATION_UI"
 
 class OperationDetailFragment : Fragment() {
 
   private lateinit var binding: FragmentOperationDetailBinding
   private var operationUuid: String? = null
-  private var operationUi: OperationUi? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     arguments?.let {
       operationUuid = it.getString(ARG_OPERATION_UUID)
-      operationUi = it.getParcelable(ARG_OPERATION_UI)
     }
   }
 
@@ -32,14 +29,13 @@ class OperationDetailFragment : Fragment() {
 
   override fun onStart() {
     super.onStart()
-    operationUi?.let { placeData(it) }
     operationUuid?.let { uuid ->
       val operation = Calculator.getOperationById(uuid)
-      operation?.let { placeData(OperationUi.fromOperation(it)) }
+      operation?.let { placeData(it) }
     }
   }
 
-  private fun placeData(ui: OperationUi) {
+  private fun placeData(ui: Operation) {
     binding.tvExpression.text = ui.expression
     binding.tvResult.text = ui.result
     binding.tvTimestamp.text = ui.timestamp.toString()
@@ -49,11 +45,10 @@ class OperationDetailFragment : Fragment() {
   companion object {
 
     @JvmStatic
-    fun newInstance(uuid: String?, ui: OperationUi?) =
+    fun newInstance(uuid: String) =
       OperationDetailFragment().apply {
         arguments = Bundle().apply {
           putString(ARG_OPERATION_UUID, uuid)
-          putParcelable(ARG_OPERATION_UI, ui)
         }
       }
   }

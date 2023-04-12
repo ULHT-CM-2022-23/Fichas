@@ -14,7 +14,7 @@ class CalculatorFragment : Fragment() {
 
     private lateinit var binding: FragmentCalculatorBinding
     private val operations = mutableListOf<String>()
-    private val adapter = HistoryAdapter(::onOperationClick, ::onOperationLongClick)
+    private val adapter = HistoryAdapter(::onOperationClick)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_calculator, container, false)
@@ -62,26 +62,21 @@ class CalculatorFragment : Fragment() {
     }
 
     private fun onClickClear() {
-        binding.textVisor.text = "0"
+        Calculator.clear()
+        binding.textVisor.text = Calculator.display
     }
 
     private fun onClickBackspace() {
-        val visorContent = binding.textVisor.text.toString()
-        binding.textVisor.text = if(visorContent.length > 1) visorContent.dropLast(1) else "0"
+        Calculator.backspace()
+        binding.textVisor.text = Calculator.display
     }
 
     private fun onClickGetPreviousOperation() {
-        operations.lastOrNull()?.let { last ->
-            val parts = last.split("=")
-            binding.textVisor.text = parts[0]
-        }
+        Calculator.showLastOperation()
+        binding.textVisor.text = Calculator.display
     }
 
-    private fun onOperationClick(operation: Operation) {
-        Toast.makeText(requireContext(), operation.toString(), Toast.LENGTH_LONG).show()
-    }
-
-    private fun onOperationLongClick(uuid: String) {
+    private fun onOperationClick(uuid: String) {
         Toast.makeText(requireContext(), uuid, Toast.LENGTH_LONG).show()
     }
 

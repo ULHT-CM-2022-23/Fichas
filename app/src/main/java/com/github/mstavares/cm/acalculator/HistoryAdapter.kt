@@ -6,8 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.mstavares.cm.acalculator.databinding.ItemExpressionBinding
 
 class HistoryAdapter(
-    private val onClick: (Operation) -> Unit,
-    private val onLongClick: (String) -> Unit,
+    private val onClick: (String) -> Unit,
     private var items: List<Operation> = listOf()
 ) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
@@ -21,8 +20,7 @@ class HistoryAdapter(
     }
 
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
-        holder.itemView.setOnClickListener { onClick(items[position]) }
-        holder.itemView.setOnLongClickListener { onLongClick(items[position].uuid); true }
+        holder.itemView.setOnClickListener { onClick(items[position].uuid) }
         holder.binding.textExpression.text = items[position].expression
         holder.binding.textResult.text = items[position].result
     }

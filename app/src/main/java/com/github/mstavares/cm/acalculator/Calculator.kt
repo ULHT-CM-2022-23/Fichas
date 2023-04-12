@@ -7,9 +7,7 @@ object Calculator {
   var display: String = "0"
     private set
 
-  private val _history = mutableListOf<Operation>(
-    Operation("1+1", "2"), Operation("2+2","4")
-  )
+  private val _history = mutableListOf<Operation>()
   val history get() = _history.toList()
 
   fun getOperationById(uuid: String): Operation? {
@@ -25,6 +23,20 @@ object Calculator {
     val result = expression.evaluate().toString()
     _history.add(Operation(display, result))
     display = result
+  }
+
+  fun clear() {
+    display = "0"
+  }
+
+  fun backspace() {
+    display = if(display.length > 1) display.dropLast(1) else "0"
+  }
+
+  fun showLastOperation() {
+    history.lastOrNull()?.let { it ->
+      display = it.expression
+    }
   }
 
 }

@@ -20,8 +20,8 @@ object NavigationManager {
         placeFragment(fm, HistoryFragment())
     }
 
-    fun goToOperationDetailFragment(fm: FragmentManager, uuid: String?, ui: OperationUi?) {
-        placeFragment(fm, OperationDetailFragment.newInstance(uuid, ui))
+    fun goToOperationDetailFragment(fm: FragmentManager, uuid: String) {
+        placeFragment(fm, OperationDetailFragment.newInstance(uuid))
     }
 
 }

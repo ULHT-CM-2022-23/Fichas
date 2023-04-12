@@ -12,7 +12,7 @@ import com.github.mstavares.cm.acalculator.databinding.FragmentHistoryBinding
 
 class HistoryFragment : Fragment() {
 
-    private val adapter = HistoryAdapter(::onOperationClick, ::onOperationLongClick, Calculator.history)
+    private val adapter = HistoryAdapter(::onOperationClick, Calculator.history)
     private lateinit var binding: FragmentHistoryBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -28,16 +28,8 @@ class HistoryFragment : Fragment() {
         binding.rvHistory.adapter = adapter
     }
 
-    private fun onOperationClick(operation: Operation) {
-        NavigationManager.goToOperationDetailFragment(
-            parentFragmentManager, null, OperationUi.fromOperation(operation)
-        )
-    }
-
-    private fun onOperationLongClick(uuid: String) {
-        NavigationManager.goToOperationDetailFragment(
-            parentFragmentManager, uuid, null
-        )
+    private fun onOperationClick(uuid: String) {
+        NavigationManager.goToOperationDetailFragment(parentFragmentManager, uuid)
     }
 
 }
