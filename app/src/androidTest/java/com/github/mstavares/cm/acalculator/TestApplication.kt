@@ -41,7 +41,7 @@ class TestApplication {
     }
 
     @Test
-    fun press2And3Then5ShouldBeDisplayed() {
+    fun press2Plus3Then5ShouldBeDisplayed() {
         onView(withId(R.id.text_visor)).check(matches(withText("0")))
         onView(withId(R.id.button_2)).perform(click())
         onView(withId(R.id.button_adition)).perform(click())
