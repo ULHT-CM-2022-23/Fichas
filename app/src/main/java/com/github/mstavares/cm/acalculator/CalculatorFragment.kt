@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mstavares.cm.acalculator.databinding.FragmentCalculatorBinding
 import net.objecthunter.exp4j.ExpressionBuilder
@@ -13,11 +14,12 @@ import net.objecthunter.exp4j.ExpressionBuilder
 class CalculatorFragment : Fragment() {
 
     private lateinit var binding: FragmentCalculatorBinding
-    private val operations = mutableListOf<String>()
+    private lateinit var viewModel: CalculatorViewModel
     private val adapter = HistoryAdapter(::onOperationClick)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_calculator, container, false)
+        viewModel = ViewModelProvider(this).get(CalculatorViewModel::class.java)
         binding = FragmentCalculatorBinding.bind(view)
         return binding.root
     }
@@ -26,8 +28,8 @@ class CalculatorFragment : Fragment() {
         super.onStart()
         binding.rvHistory?.layoutManager = LinearLayoutManager(requireContext())
         binding.rvHistory?.adapter = adapter
-        adapter.updateItems(Calculator.history)
-        binding.textVisor.text = "0"
+        adapter.updateItems(viewModel.getHistory())
+        binding.textVisor.text = viewModel.getDisplay()
         binding.button0.setOnClickListener { onClickSymbol("0") }
         binding.button00.setOnClickListener { onClickSymbol("00") }
         binding.button1.setOnClickListener { onClickSymbol("1") }
@@ -51,29 +53,29 @@ class CalculatorFragment : Fragment() {
     }
 
     private fun onClickSymbol(symbol: String) {
-        Calculator.addSymbol(symbol)
-        binding.textVisor.text = Calculator.display
+        viewModel.addSymbol(symbol)
+        binding.textVisor.text = viewModel.getDisplay()
     }
 
     private fun onClickEquals() {
-        Calculator.equals()
-        binding.textVisor.text = Calculator.display
-        adapter.updateItems(Calculator.history)
+        viewModel.equals()
+        binding.textVisor.text = viewModel.getDisplay()
+        adapter.updateItems(viewModel.getHistory())
     }
 
     private fun onClickClear() {
-        Calculator.clear()
-        binding.textVisor.text = Calculator.display
+        viewModel.clear()
+        binding.textVisor.text = viewModel.getDisplay()
     }
 
     private fun onClickBackspace() {
-        Calculator.backspace()
-        binding.textVisor.text = Calculator.display
+        viewModel.backspace()
+        binding.textVisor.text = viewModel.getDisplay()
     }
 
     private fun onClickGetPreviousOperation() {
-        Calculator.showLastOperation()
-        binding.textVisor.text = Calculator.display
+        viewModel.showLastOperation()
+        binding.textVisor.text = viewModel.getDisplay()
     }
 
     private fun onOperationClick(uuid: String) {
