@@ -1,35 +1,36 @@
 package com.github.mstavares.cm.acalculator
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mstavares.cm.acalculator.databinding.FragmentCalculatorBinding
-import net.objecthunter.exp4j.ExpressionBuilder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class CalculatorFragment : Fragment() {
 
     private lateinit var binding: FragmentCalculatorBinding
-    private lateinit var viewModel: CalculatorViewModel
     private val adapter = HistoryAdapter(::onOperationClick)
+    private lateinit var calculator: CalculatorRoom
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_calculator, container, false)
-        viewModel = ViewModelProvider(this).get(CalculatorViewModel::class.java)
         binding = FragmentCalculatorBinding.bind(view)
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
+        calculator = CalculatorRoom(CalculatorDatabase.getInstance(requireContext()).operationDao())
+        updateHistory()
         binding.rvHistory?.layoutManager = LinearLayoutManager(requireContext())
         binding.rvHistory?.adapter = adapter
-        adapter.updateItems(viewModel.getHistory())
-        binding.textVisor.text = viewModel.getDisplay()
+        binding.textVisor.text = calculator.display
         binding.button0.setOnClickListener { onClickSymbol("0") }
         binding.button00.setOnClickListener { onClickSymbol("00") }
         binding.button1.setOnClickListener { onClickSymbol("1") }
@@ -52,30 +53,43 @@ class CalculatorFragment : Fragment() {
         binding.buttonEquals.setOnClickListener { onClickEquals() }
     }
 
+
     private fun onClickSymbol(symbol: String) {
-        viewModel.addSymbol(symbol)
-        binding.textVisor.text = viewModel.getDisplay()
+        calculator.addSymbol(symbol)
+        binding.textVisor.text = calculator.display
     }
 
     private fun onClickEquals() {
-        viewModel.equals()
-        binding.textVisor.text = viewModel.getDisplay()
-        adapter.updateItems(viewModel.getHistory())
+        CoroutineScope(Dispatchers.IO).launch {
+            calculator.equals()
+            updateHistory()
+            CoroutineScope(Dispatchers.Main).launch {
+                binding.textVisor.text = calculator.display
+            }
+        }
+    }
+
+    private fun updateHistory() {
+        CoroutineScope(Dispatchers.IO).launch {
+            calculator.getHistory { history ->
+                CoroutineScope(Dispatchers.Main).launch {
+                    adapter.updateItems(history)
+                }
+            }
+        }
     }
 
     private fun onClickClear() {
-        viewModel.clear()
-        binding.textVisor.text = viewModel.getDisplay()
+        calculator.clear()
+        binding.textVisor.text = calculator.display
     }
 
     private fun onClickBackspace() {
-        viewModel.backspace()
-        binding.textVisor.text = viewModel.getDisplay()
+        calculator.backspace()
+        binding.textVisor.text = calculator.display
     }
 
     private fun onClickGetPreviousOperation() {
-        viewModel.showLastOperation()
-        binding.textVisor.text = viewModel.getDisplay()
     }
 
     private fun onOperationClick(uuid: String) {
