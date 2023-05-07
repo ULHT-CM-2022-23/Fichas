@@ -30,8 +30,11 @@ class OperationDetailFragment : Fragment() {
   override fun onStart() {
     super.onStart()
     operationUuid?.let { uuid ->
+      /*
+      TODO
       val operation = Calculator.getOperationById(uuid)
       operation?.let { placeData(it) }
+       */
     }
   }
 
