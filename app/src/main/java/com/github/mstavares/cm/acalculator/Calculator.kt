@@ -5,7 +5,7 @@ import net.objecthunter.exp4j.ExpressionBuilder
 abstract class Calculator {
 
   var display: String = "0"
-    private set
+    protected set
 
   fun addSymbol(symbol: String) {
     display = if(display == "0") symbol else "$display$symbol"
@@ -25,7 +25,11 @@ abstract class Calculator {
     display = if(display.length > 1) display.dropLast(1) else "0"
   }
 
-  abstract suspend fun showLastOperation()
-  abstract suspend fun getHistory(callback: (List<Operation>) -> Unit)
+  /** Preciso de uma callback aqui, pois não sei quanto tempo a operação demora a ser executada.
+   *  Esta informação é necessária porque preciso de atualizar a view com base no novo display atualizado
+   */
+  abstract fun showLastOperation(onFinished: () -> Unit)
+  abstract fun insertRemoteHistory(operations: List<Operation>, onFinished: () -> Unit)
+  abstract fun getHistory(onFinished: (Result<List<Operation>>) -> Unit)
 
 }
