@@ -53,7 +53,6 @@ class CalculatorFragment : Fragment() {
         binding.buttonEquals.setOnClickListener { onClickEquals() }
     }
 
-
     private fun onClickSymbol(symbol: String) {
         calculator.addSymbol(symbol)
         binding.textVisor.text = calculator.display
@@ -71,9 +70,9 @@ class CalculatorFragment : Fragment() {
 
     private fun updateHistory() {
         CoroutineScope(Dispatchers.IO).launch {
-            calculator.getHistory { history ->
-                CoroutineScope(Dispatchers.Main).launch {
-                    adapter.updateItems(history)
+            calculator.getHistory { result ->
+                if(result.isSuccess) {
+                    adapter.updateItems(result.getOrDefault(mutableListOf()))
                 }
             }
         }
@@ -90,6 +89,13 @@ class CalculatorFragment : Fragment() {
     }
 
     private fun onClickGetPreviousOperation() {
+        CoroutineScope(Dispatchers.IO).launch {
+            calculator.showLastOperation{
+                CoroutineScope(Dispatchers.Main).launch {
+                    binding.textVisor.text = calculator.display
+                }
+            }
+        }
     }
 
     private fun onOperationClick(uuid: String) {
