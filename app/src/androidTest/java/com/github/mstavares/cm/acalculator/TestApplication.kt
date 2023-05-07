@@ -8,6 +8,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.mockk.mockk
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -22,6 +23,8 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class TestApplication {
 
+    private lateinit var calculator: Calculator
+
     /**
      * Use [ActivityScenarioRule] to create and launch the activity under test before each test,
      * and close it after each test.
@@ -31,6 +34,8 @@ class TestApplication {
 
     @Before
     fun clearVisor() {
+        //val dao = mockk<OperationDao>(relaxed = true)
+        //calculator = CalculatorRoom(dao)
         onView(withId(R.id.button_clear)).perform(click())
     }
 
