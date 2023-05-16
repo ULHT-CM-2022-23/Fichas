@@ -10,7 +10,7 @@ class CalculatorOkHttp(
   private val client: OkHttpClient
 ) : Calculator() {
 
-  override suspend fun getHistory(onFinished: (Result<List<Operation>>) -> Unit) {
+  override fun getHistory(onFinished: (Result<List<Operation>>) -> Unit) {
     val request = Request.Builder()
       .addHeader("apiKey", apiKey)
       .url("$url/operations")
@@ -38,8 +38,7 @@ class CalculatorOkHttp(
                 jsonOperation.getString("result"),
                 jsonOperation.getLong("timestamp"),
                 jsonOperation.getString("uuid")
-              )
-              )
+              ))
             }
             onFinished(Result.success(operations))
           }
@@ -48,11 +47,11 @@ class CalculatorOkHttp(
     })
   }
 
-  override suspend fun showLastOperation(onFinished: () -> Unit) {
+  override fun showLastOperation(onFinished: () -> Unit) {
     throw Exception("Illegal operation")
   }
 
-  override suspend fun insertRemoteHistory(operations: List<Operation>, onFinished: () -> Unit) {
+  override fun insertRemoteHistory(operations: List<Operation>, onFinished: () -> Unit) {
     throw Exception("Illegal operation")
   }
 

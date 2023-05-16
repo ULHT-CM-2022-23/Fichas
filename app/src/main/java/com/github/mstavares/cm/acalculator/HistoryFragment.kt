@@ -29,13 +29,16 @@ class HistoryFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         //calculator = CalculatorRoom(CalculatorDatabase.getInstance(requireContext()).operationDao())
+
         calculator = CalculatorOkHttp(
             "https://myprofhelper.duckdns.org/calculadora/api",
             "8270435acfead39ccb03e8aafbf37c49359dfbbcac4ef4769ae82c9531da0e17",
             OkHttpClient()
         )
+
         binding.rvHistory.layoutManager = LinearLayoutManager(requireContext())
         binding.rvHistory.adapter = adapter
+
         CoroutineScope(Dispatchers.IO).launch {
             calculator.getHistory { result ->
                 if(result.isSuccess) {
@@ -44,6 +47,12 @@ class HistoryFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun getOperations(onFinished: (List<String>) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            onFinished(mutableListOf())
         }
     }
 

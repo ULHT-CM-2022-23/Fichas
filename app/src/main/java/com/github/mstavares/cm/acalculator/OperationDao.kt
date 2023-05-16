@@ -12,7 +12,7 @@ interface OperationDao {
   fun insert(operation: OperationRoom)
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insertAll(operations: List<OperationRoom>)
+  fun insertAll(operations: List<OperationRoom>)
 
   @Query("SELECT * FROM operation ORDER BY timestamp ASC")
   fun getAll(): List<OperationRoom>
