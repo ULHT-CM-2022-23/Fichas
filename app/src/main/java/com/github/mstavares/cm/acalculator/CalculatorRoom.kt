@@ -1,5 +1,8 @@
 package com.github.mstavares.cm.acalculator
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 
 class CalculatorRoom(private val dao: OperationDao) : Calculator() {
@@ -11,7 +14,7 @@ class CalculatorRoom(private val dao: OperationDao) : Calculator() {
     dao.insert(operation)
   }
 
-  override suspend fun showLastOperation(onFinished: () -> Unit) {
+  override fun showLastOperation(onFinished: () -> Unit) {
     val operationRoom = dao.getLastEntry()
     if(operationRoom != null) {
       display = operationRoom.expression
@@ -19,20 +22,16 @@ class CalculatorRoom(private val dao: OperationDao) : Calculator() {
     }
   }
 
-  override suspend fun getHistory(onFinished: (Result<List<Operation>>) -> Unit) {
+  override fun insertRemoteHistory(operations: List<Operation>, onFinished: () -> Unit) {
+    TODO("Not yet implemented")
+  }
+
+  override fun getHistory(onFinished: (Result<List<Operation>>) -> Unit) {
     val roomOperations = dao.getAll()
     val operations = roomOperations.map {
       Operation(it.expression, it.result.toString(), it.timestamp, it.uuid)
     }
     onFinished(Result.success(operations))
-  }
-
-  suspend fun insertRemoteHistory(operations: List<Operation>, onFinished: () -> Unit) {
-    val roomOperations = operations.map { OperationRoom(
-      it.uuid, it.expression, it.result.toDouble(), it.timestamp
-    )}
-    dao.insertAll(roomOperations)
-    onFinished()
   }
 
 }

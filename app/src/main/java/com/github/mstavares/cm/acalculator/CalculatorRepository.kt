@@ -27,7 +27,7 @@ class CalculatorRepository(
     local.equals()
   }
 
-  suspend fun showLastOperation(onFinished: () ->Unit) {
+  suspend fun showLastOperation(onFinished: () -> Unit) {
     local.showLastOperation(onFinished)
   }
 
